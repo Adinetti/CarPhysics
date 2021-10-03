@@ -53,14 +53,25 @@ namespace CarPhysics.Models {
             }
         }
 
-        public void Update(float deltaTime) {
+        public void Update(float deltaTime, Rigidbody rigidbody) {
             Drivetrain.Update(deltaTime);
+            CalculateSpeed(rigidbody);
+        }
+
+        private void CalculateSpeed(Rigidbody rigidbody) {
+            Speed = 0;
+            float rbVelocity = rigidbody.velocity.sqrMagnitude;
+            rbVelocity = (float)Math.Round(rbVelocity, 2);
+            if (rbVelocity > 0) {
+                Speed = 3.6f * Vector3.Dot(rigidbody.velocity, rigidbody.transform.forward);
+            }
+            Speed = Mathf.RoundToInt(Speed);
+            Speed = Mathf.Abs(Speed);
         }
 
         public void FixedUpdate(AxesInfo rotateWheels, AxesInfo motorWheels, float deltaTime) {
             Steering(rotateWheels);
             Drivetrain.FixedUpdate(Throttle, motorWheels, deltaTime);
-            CalculateSpeed(motorWheels);
             Breaking(rotateWheels, motorWheels);
         }
 

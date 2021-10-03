@@ -16,20 +16,22 @@ namespace CarPhysics.Models.Engine {
         private float _timer;
         private int _nextGearID;
         private int _gearID;
+        private int _direction;
 
         public GearName Gear => _gears[_gearID].name;
         public int GearCount => _gears.Length;
         public int GearID => _gearID;
         public GearboxState State { get; private set; }
         public float Torque { get; private set; }
-        public float Ratio => _gears[_gearID].ratio;
-
+        public float Ratio => Mathf.Abs(_gears[_gearID].ratio) * _direction;
+        //public float Ratio => _gears[_gearID].ratio;
         public Gearbox(GearboxSetup setup) {
             _gears = setup.gears;
             SwicthToNeitralGear();
             _swicthTime = setup.switchTime;
             State = GearboxState.Wait;
             _nextGearID = -1;
+            _direction = 1;
         }
 
         public bool SwicthToNeitralGear() {
@@ -63,6 +65,7 @@ namespace CarPhysics.Models.Engine {
         }
 
         public void Update(float deltaTime) {
+            _direction = Gear == GearName.R ? -1 : 1;
             if (State == GearboxState.Swicth) {
                 _timer += deltaTime;
                 if (_timer >= _swicthTime) {

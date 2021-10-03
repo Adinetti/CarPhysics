@@ -18,13 +18,13 @@ namespace CarPhysics.Models.Engine {
         }
 
         public override void FixedUpdate(float throttle, AxesInfo motorWheels, float deltaTime) {
+            Gearbox.FixedUpdate(_clutch.Torque);
             _differential.FixedUpdate(Gearbox.Torque);
             UpdateWheels(motorWheels);
             var shaftVelocity = _differential.GetShaftVelocity(_leftWheelAngularVelocity, _rightWheelAngularVelocity);
             shaftVelocity = Gearbox.GetInputShaftVelocity(shaftVelocity);
             _clutch.FixedUpdate(shaftVelocity, Engine.AngularVelocity, Gearbox.Ratio);
             Engine.FixedUpdate(_clutch.Torque, throttle, deltaTime);
-            Gearbox.FixedUpdate(_clutch.Torque);
         }
 
         private void UpdateWheels(AxesInfo motorWheels) {
